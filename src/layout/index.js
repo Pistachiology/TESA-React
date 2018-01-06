@@ -2,10 +2,10 @@ import { fontSizes, media } from 'common/mixins'
 
 import CommonActions from 'common/actions'
 import CommonSelectors from 'common/selectors'
-import LoadingOverlay from 'common/components/Loader/semantic'
+//import LoadingOverlay from 'common/components/Loader/semantic'
 import React from 'react'
 import { connect } from 'react-redux'
-import hideable from 'common/enchancers/hideable'
+//import hideable from 'common/enchancers/hideable'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -22,7 +22,7 @@ const Container = styled.div`
   }
 `
 
-const HideableLoadingOverlay = hideable()(LoadingOverlay)
+// const HideableLoadingOverlay = hideable()(LoadingOverlay)
 
 const EnchancedLayout = title => Component => {
   class Layout extends React.PureComponent {
@@ -35,7 +35,7 @@ const EnchancedLayout = title => Component => {
         <Container>
           {title}
           <Component {...this.props} />
-          <HideableLoadingOverlay hide={!this.props.isLoading} />
+          {/* <HideableLoadingOverlay hide={!this.props.isLoading} /> */}
         </Container>
       )
     }

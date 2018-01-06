@@ -1,13 +1,15 @@
 import './index.css'
 
 import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux'
-import { applyMiddleware, combineReducers, createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 
 import IndexPage from 'pages/index'
 import { Provider } from 'react-redux'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Route } from 'react-router'
+import { combineReducers } from 'redux-immutable'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import createHistory from 'history/createBrowserHistory'
 import reducers from './reducers'
 import registerServiceWorker from './registerServiceWorker'
@@ -26,8 +28,7 @@ const store = createStore(
     ...reducers,
     router: routerReducer
   }),
-  applyMiddleware(middleware),
-  applyMiddleware(thunk)
+  composeWithDevTools(applyMiddleware(middleware, thunk))
 )
 
 ReactDOM.render(
