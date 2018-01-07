@@ -1,4 +1,5 @@
 import './index.css'
+import 'semantic-ui-css/semantic.min.css'
 
 import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux'
 import { applyMiddleware, createStore } from 'redux'
