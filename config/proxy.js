@@ -13,5 +13,11 @@ module.exports = {
     target: process.env.STATIC_GATEWAY,
     changeOrigin: true,
     logLevel: 'debug'
+  },
+  '/socketjs-node': {
+    target: 'http://localhost:' + process.env.PORT,
+    changeOrigin: true,
+    logLevel: 'debug',
+    ws: true
   }
 }

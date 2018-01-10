@@ -27,7 +27,7 @@ const Container = styled.div`
 `
 const HideableLoadingOverlay = hideable()(LoadingOverlay)
 
-const EnchancedLayout = title => Component => {
+const EnchancedLayout = () => Component => {
   class Layout extends React.PureComponent {
     state = {
       isActive: true
@@ -58,7 +58,6 @@ const EnchancedLayout = title => Component => {
       const { loading } = this.props
       return (
         <div>
-          {title}
           <HideableLoadingOverlay hide={!loading} />
           <Menu user={this.props.user} onToggle={() => this.setState({ isActive: !this.state.isActive })} isMobile={this.isMobile} />
           <Container>

@@ -33,6 +33,42 @@ const Sidebar = ({ className, isActive }) => (
         Dashboard
       </Menu.Item>
     </Link>
+    <Link to="/pressure">
+      <Menu.Item name="pressure">
+        <Icon name="dashboard" />
+        Pressure
+      </Menu.Item>
+    </Link>
+    <Link to="/temperature">
+      <Menu.Item name="temperature">
+        <Icon name="dashboard" />
+        Temperature
+      </Menu.Item>
+    </Link>
+    <Link to="/humidity">
+      <Menu.Item name="humidity">
+        <Icon name="dashboard" />
+        Humidity
+      </Menu.Item>
+    </Link>
+    <Link to="/gyroscope">
+      <Menu.Item name="gyroscope">
+        <Icon name="dashboard" />
+        Gyroscope
+      </Menu.Item>
+    </Link>
+    <Link to="/accelerometer">
+      <Menu.Item name="accelerometer">
+        <Icon name="dashboard" />
+        Accelerometer
+      </Menu.Item>
+    </Link>
+    {/* <Link to="/din">
+      <Menu.Item name="digitalInput">
+        <Icon name="dashboard" />
+        Digital Input
+      </Menu.Item>
+    </Link> */}
   </SidebarMenu>
 )
 

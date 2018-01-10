@@ -4,11 +4,19 @@ import 'semantic-ui-css/semantic.min.css'
 import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux'
 import { applyMiddleware, createStore } from 'redux'
 
+import AccelerometerPage from 'pages/accelerometer'
+import DigitalInputPage from 'pages/digitalInput'
+import GyroscopePage from 'pages/gyroscope'
+import HumidityPage from 'pages/humidity'
 import IndexPage from 'pages/index'
+import LedPage from 'pages/led'
+import MagnetometerPage from 'pages/magnetometer'
+import PressurePage from 'pages/pressure'
 import { Provider } from 'react-redux'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Route } from 'react-router'
+import TemperaturePage from 'pages/temperature'
 import { combineReducers } from 'redux-immutable'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import createHistory from 'history/createBrowserHistory'
@@ -36,7 +44,17 @@ ReactDOM.render(
   <Provider store={store}>
     {/* Tell the Router to use our enhanced history */}
     <ConnectedRouter history={history}>
-      <Route path="/" component={IndexPage} />
+      <div>
+        <Route exact path="/" component={IndexPage} />
+        <Route exact path="/pressure" component={PressurePage} />
+        <Route exact path="/temperature" component={TemperaturePage} />
+        <Route exact path="/humidity" component={HumidityPage} />
+        <Route path="/accelerometer" component={AccelerometerPage} />
+        <Route path="/gyroscope" component={GyroscopePage} />
+        <Route path="/led" component={LedPage} />
+        <Route path="/magnetometer" component={MagnetometerPage} />
+        <Route path="/din" component={DigitalInputPage} />
+      </div>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('root')
