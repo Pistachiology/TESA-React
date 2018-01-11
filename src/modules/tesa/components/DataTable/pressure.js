@@ -1,12 +1,13 @@
 import DataTable from './index'
 import React from 'react'
 
-const PressureDataTable = ({ className, data }) => {
+const PressureDataTable = ({ className, data, filterable }) => {
   return (
     <div className={className}>
       <DataTable
         title="Pressure"
         data={data.toJS()}
+        filterable={filterable}
         tableProps={{
           compact: true,
           basic: 'very',
@@ -15,7 +16,7 @@ const PressureDataTable = ({ className, data }) => {
         }}
         header
         rowsPerPage={10}
-        columnHeader={['sensID', 'val', 'date']}
+        columnHeader={['teamID', 'sensID', 'val', 'date']}
       />
     </div>
   )

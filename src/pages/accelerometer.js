@@ -1,22 +1,18 @@
 import AccelerometerDataTable from 'modules/tesa/components/DataTable/accelerometer'
-import Api from 'common/lib/api'
 import { Container } from 'semantic-ui-react'
-import Immutable from 'immutable'
 import React from 'react'
+import TesaActions from 'modules/tesa/actions'
+import TesaSelectors from 'modules/tesa/selectors'
 import { compose } from 'redux'
+import { connect } from 'react-redux'
 import withLayout from 'layout'
 
 class AccelerometerPage extends React.Component {
-  state = {
-    accelerometer: Immutable.List()
-  }
-  async componentWillMount() {
-    const rawAccelerometer = await Api.getAccelerometer()
-    const accelerometer = rawAccelerometer.get('data') || Immutable.List()
-    this.setState({ accelerometer })
+  componentWillMount() {
+    this.props.getAccelerometer()
   }
   render() {
-    const { accelerometer } = this.state
+    const { accelerometer } = this.props
 
     return (
       <Container>
@@ -26,4 +22,12 @@ class AccelerometerPage extends React.Component {
   }
 }
 
-export default compose(withLayout('Accelerometer'))(AccelerometerPage)
+const mapStateToProps = state => ({
+  accelerometer: TesaSelectors.accelerometer(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+  getAccelerometer: () => dispatch(TesaActions.getAccelerometer())
+})
+
+export default compose(withLayout('Accelerometer'), connect(mapStateToProps, mapDispatchToProps))(AccelerometerPage)

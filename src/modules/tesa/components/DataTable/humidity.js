@@ -1,12 +1,13 @@
 import DataTable from './index'
 import React from 'react'
 
-const HumidityDataTable = ({ className, data }) => {
+const HumidityDataTable = ({ className, data, filterable }) => {
   return (
     <div className={className}>
       <DataTable
         title="Humidity"
         data={data.toJS()}
+        filterable={filterable}
         tableProps={{
           compact: true,
           basic: 'very',
@@ -15,7 +16,7 @@ const HumidityDataTable = ({ className, data }) => {
         }}
         header
         rowsPerPage={20}
-        columnHeader={['sensID', 'val', 'date']}
+        columnHeader={['teamID', 'sensID', 'val', 'date']}
       />
     </div>
   )

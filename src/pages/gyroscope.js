@@ -1,29 +1,33 @@
-import Api from 'common/lib/api'
 import { Container } from 'semantic-ui-react'
 import GyroscopeDataTable from 'modules/tesa/components/DataTable/gyroscope'
-import Immutable from 'immutable'
 import React from 'react'
+import TesaActions from 'modules/tesa/actions'
+import TesaSelectors from 'modules/tesa/selectors'
 import { compose } from 'redux'
+import { connect } from 'react-redux'
 import withLayout from 'layout'
 
 class GyroscopePage extends React.Component {
-  state = {
-    gyroscope: Immutable.List()
-  }
-  async componentWillMount() {
-    const rawGyroscope = await Api.getGyroscope()
-    const gyroscope = rawGyroscope.get('data') || Immutable.List()
-    this.setState({ gyroscope })
+  componentWillMount() {
+    this.props.getGyroscope()
   }
   render() {
-    const { gyroscope } = this.state
+    const { gyroscope } = this.props
 
     return (
       <Container>
-        <GyroscopeDataTable data={gyroscope} />
+        <GyroscopeDataTable data={gyroscope} filterable />
       </Container>
     )
   }
 }
 
-export default compose(withLayout('Gyroscope'))(GyroscopePage)
+const mapStateToProps = state => ({
+  gyroscope: TesaSelectors.gyroscope(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+  getGyroscope: () => dispatch(TesaActions.getGyroscope())
+})
+
+export default compose(withLayout('Gyroscope'), connect(mapStateToProps, mapDispatchToProps))(GyroscopePage)

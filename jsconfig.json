@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2017",
+		"jsx": "react",
+		"sourceMap": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"outDir": ".next",
+		"baseUrl": "./",
+		"paths": {
+			"src/*": ["src/*"],
+			"pages/*": ["src/pages/*"],
+			"common/*": ["src/common/*"],
+			"modules/*": ["src/modules/*"],
+			"layout/*": ["src/layout/*"],
+			"layout": ["src/layout"]
+		},
+		"plugins": [{
+			"name": "typescript-styled-plugin",
+			"validate": false
+		}]
+	},
+	"include": ["./src/**/*"],
+	"exclude": ["dist", "node_modules", ".next"]
+}

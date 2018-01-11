@@ -1,41 +1,33 @@
-import Api from 'common/lib/api'
 import { Container } from 'semantic-ui-react'
-import DataTable from 'modules/tesa/components/DataTable'
-import Immutable from 'immutable'
+import DataTable from 'modules/tesa/components/DataTable/temperature'
 import React from 'react'
+import TesaActions from 'modules/tesa/actions'
+import TesaSelectors from 'modules/tesa/selectors'
 import { compose } from 'redux'
+import { connect } from 'react-redux'
 import withLayout from 'layout'
 
 class TemperaturePage extends React.Component {
-  state = {
-    temperature: Immutable.List()
-  }
-  async componentWillMount() {
-    const rawTemperature = await Api.getTemperature()
-    const temperature = rawTemperature.get('data') || Immutable.List()
-    this.setState({ temperature })
+  componentWillMount() {
+    this.props.getTemperature()
   }
   render() {
-    const { temperature } = this.state
+    const { temperature } = this.props
 
     return (
       <Container>
-        <DataTable
-          title="Temperature"
-          data={temperature.toJS()}
-          tableProps={{
-            compact: true,
-            basic: 'very',
-            striped: true,
-            size: 'small'
-          }}
-          header
-          rowsPerPage={20}
-          columnHeader={['sensID', 'val', 'date']}
-        />
+        <DataTable data={temperature} filterable />
       </Container>
     )
   }
 }
 
-export default compose(withLayout('Temperature'))(TemperaturePage)
+const mapStateToProps = state => ({
+  temperature: TesaSelectors.temperature(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+  getTemperature: () => dispatch(TesaActions.getTemperature())
+})
+
+export default compose(withLayout('Temperature'), connect(mapStateToProps, mapDispatchToProps))(TemperaturePage)

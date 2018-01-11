@@ -38,4 +38,4 @@ class LedPage extends React.Component {
   }
 }
 
-export default compose(withLayout('Pressure'))(LedPage)
+export default compose(withLayout('LED'))(LedPage)

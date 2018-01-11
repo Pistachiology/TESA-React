@@ -63,12 +63,12 @@ const Sidebar = ({ className, isActive }) => (
         Accelerometer
       </Menu.Item>
     </Link>
-    {/* <Link to="/din">
+    <Link to="/din">
       <Menu.Item name="digitalInput">
         <Icon name="dashboard" />
         Digital Input
       </Menu.Item>
-    </Link> */}
+    </Link>
   </SidebarMenu>
 )
 

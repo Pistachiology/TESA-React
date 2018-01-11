@@ -1,11 +1,11 @@
 import DataTable from './index'
 import React from 'react'
 
-const GyroscopeDataTable = ({ className, data, filterable }) => {
+const DigitalInputDataTable = ({ className, data, filterable }) => {
   return (
     <div className={className}>
       <DataTable
-        title="Gyroscope"
+        title="Digital Input"
         data={data.toJS()}
         filterable={filterable}
         tableProps={{
@@ -16,10 +16,10 @@ const GyroscopeDataTable = ({ className, data, filterable }) => {
         }}
         header
         rowsPerPage={20}
-        columnHeader={['teamID', 'sensID', 'val_x', 'val_y', 'val_z', 'date']}
+        columnHeader={['teamID', 'sensID', 'val', 'date']}
       />
     </div>
   )
 }
 
-export default GyroscopeDataTable
+export default DigitalInputDataTable

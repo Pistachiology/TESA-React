@@ -1,29 +1,33 @@
-import Api from 'common/lib/api'
 import { Container } from 'semantic-ui-react'
-import Immutable from 'immutable'
 import PressureDataTable from 'modules/tesa/components/DataTable/pressure'
 import React from 'react'
+import TesaActions from 'modules/tesa/actions'
+import TesaSelectors from 'modules/tesa/selectors'
 import { compose } from 'redux'
+import { connect } from 'react-redux'
 import withLayout from 'layout'
 
 class PressurePage extends React.Component {
-  state = {
-    pressure: Immutable.List()
-  }
-  async componentWillMount() {
-    const rawPressure = await Api.getPressure()
-    const pressure = rawPressure.get('data') || Immutable.List()
-    this.setState({ pressure })
+  componentWillMount() {
+    this.props.getPressure()
   }
   render() {
-    const { pressure } = this.state
+    const { pressure } = this.props
 
     return (
       <Container>
-        <PressureDataTable data={pressure} />
+        <PressureDataTable data={pressure} filterable />
       </Container>
     )
   }
 }
 
-export default compose(withLayout('Pressure'))(PressurePage)
+const mapStateToProps = state => ({
+  pressure: TesaSelectors.pressure(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+  getPressure: () => dispatch(TesaActions.getPressure())
+})
+
+export default compose(withLayout('Pressure'), connect(mapStateToProps, mapDispatchToProps))(PressurePage)

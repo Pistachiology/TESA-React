@@ -1,47 +1,33 @@
-import Api from 'common/lib/api'
 import { Container } from 'semantic-ui-react'
-import DataTable from 'modules/tesa/components/DataTable'
-import Immutable from 'immutable'
+import DataTable from 'modules/tesa/components/DataTable/digitalInput'
 import React from 'react'
+import TesaActions from 'modules/tesa/actions'
+import TesaSelectors from 'modules/tesa/selectors'
 import { compose } from 'redux'
+import { connect } from 'react-redux'
 import withLayout from 'layout'
 
 class DigitalInputPage extends React.Component {
-  state = {
-    din: Immutable.List()
-  }
   async componentWillMount() {
-    let din = Immutable.List()
-    for (let i = 1; i <= 5; i++) {
-      const d = await Api.getDigitalInput(i)
-      din.push(d.get('data') || Immutable.List())
-    }
-    this.setState({ din })
+    this.props.getDigitalInput()
   }
   render() {
-    const { din } = this.state
+    const { digitalInput } = this.props
 
     return (
       <Container>
-        {din.map((d, i) => (
-          <DataTable
-            title={`Digital Input ${i}`}
-            data={d.toJS()}
-            tableProps={{
-              compact: true,
-              basic: 'very',
-              striped: true,
-              size: 'small'
-            }}
-            header
-            rowsPerPage={20}
-            columnHeader={['sensID', 'val', 'date']}
-            key={i}
-          />
-        ))}
+        <DataTable data={digitalInput} filterable />
       </Container>
     )
   }
 }
 
-export default compose(withLayout('Pressure'))(DigitalInputPage)
+const mapStateToProps = state => ({
+  digitalInput: TesaSelectors.digitalInput(state)
+})
+
+const mapDispatchToProps = dispatch => ({
+  getDigitalInput: () => dispatch(TesaActions.getDigitalInput(1))
+})
+
+export default compose(withLayout('Pressure'), connect(mapStateToProps, mapDispatchToProps))(DigitalInputPage)

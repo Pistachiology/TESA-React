@@ -1,7 +1,8 @@
 import './index.css'
 import 'semantic-ui-css/semantic.min.css'
+import 'react-datetime/css/react-datetime.css'
 
-import { ConnectedRouter, routerMiddleware, routerReducer } from 'react-router-redux'
+import { ConnectedRouter, routerMiddleware } from 'react-router-redux'
 import { applyMiddleware, createStore } from 'redux'
 
 import AccelerometerPage from 'pages/accelerometer'
@@ -17,7 +18,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Route } from 'react-router'
 import TemperaturePage from 'pages/temperature'
-import { combineReducers } from 'redux-immutable'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import createHistory from 'history/createBrowserHistory'
 import reducers from './reducers'
@@ -32,13 +32,7 @@ const middleware = routerMiddleware(history)
 
 // Add the reducer to your store on the `router` key
 // Also apply our middleware for navigating
-const store = createStore(
-  combineReducers({
-    ...reducers,
-    router: routerReducer
-  }),
-  composeWithDevTools(applyMiddleware(middleware, thunk))
-)
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(middleware, thunk)))
 
 ReactDOM.render(
   <Provider store={store}>

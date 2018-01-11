@@ -13,7 +13,7 @@ const PageContainer = styled.div`
   display: block;
   float: left;
   width: 100%;
-  padding-top: 40px; // magic number
+  padding-top: 80px; // magic number
   flex: 1 1 0;
   ${media.xs`
 		overflow: hidden;

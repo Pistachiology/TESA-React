@@ -1,12 +1,13 @@
 import DataTable from './index'
 import React from 'react'
 
-const AccelerometerDataTable = ({ className, data }) => {
+const AccelerometerDataTable = ({ className, data, filterable }) => {
   return (
     <div className={className}>
       <DataTable
         title="Accelerometer"
         data={data.toJS()}
+        filterable={filterable}
         tableProps={{
           compact: true,
           basic: 'very',
@@ -15,7 +16,7 @@ const AccelerometerDataTable = ({ className, data }) => {
         }}
         header
         rowsPerPage={20}
-        columnHeader={['sensID', 'val_x', 'val_y', 'val_z', 'date']}
+        columnHeader={['teamID', 'sensID', 'val_x', 'val_y', 'val_z', 'date']}
       />
     </div>
   )

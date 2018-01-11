@@ -1,35 +1,85 @@
 import * as hash from 'object-hash'
 
-import { Header, Menu, MenuItem, Table, TableBody, TableCell, TableFooter, TableHeader, TableHeaderCell, TableRow } from 'semantic-ui-react'
+import {
+  Header,
+  Icon,
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHeader,
+  TableHeaderCell,
+  TableRow
+} from 'semantic-ui-react'
 
+import { Dropdown } from 'semantic-ui-react'
 import React from 'react'
+import _ from 'lodash'
+import moment from 'moment'
+import styled from 'styled-components'
+
+const StyledTableHeaderCell = styled(TableHeaderCell)`
+  .left {
+    display: block;
+    float: left;
+  }
+  .right {
+    display: block;
+    float: right;
+    .asc {
+      display: ${props => (props.Asc || !props.doActive ? 'block' : 'none')};
+    }
+    .desc {
+      display: ${props => (!props.Asc || !props.doActive ? 'block' : 'none')};
+    }
+  }
+`
 
 export default class DataTable extends React.Component {
   constructor(props) {
     super(props)
 
+    let data = props.data
+
     const rowsPerPage = props.rowsPerPage || 5
-    const numberOfPages = Math.ceil(props.data.length / rowsPerPage)
-    const columns = props.columnHeader || Object.keys(props.data[0] || [])
+    const numberOfPages = Math.ceil(data.length / rowsPerPage)
+    const columns = props.columnHeader || Object.keys(data[0] || [])
 
     this.state = {
       currentPage: 1,
       rowsPerPage: rowsPerPage,
       numberOfPages: numberOfPages,
       columns: columns,
-      dataLength: props.data.length
+      dataLength: data.length,
+      data: data,
+      dropdownValue: -1,
+      sortBy: 'sensID',
+      increasingSort: true
     }
   }
 
-  componentWillUpdate(nextProps) {
-    const numberOfPages = Math.ceil(nextProps.data.length / this.props.rowsPerPage)
-    const columns = nextProps.columnHeader || Object.keys(nextProps.data[0] || [])
-    const dataLength = nextProps.data.length
-    if (dataLength !== this.props.data.length) {
+  componentWillUpdate(nextProps, nextState) {
+    let data = nextProps.data
+    let dropdownValue = nextState.dropdownValue || this.state.dropdownValue
+    if (nextProps.filterable && dropdownValue != -1) {
+      data = data.filter(v => v.teamID == dropdownValue)
+    }
+
+    const numberOfPages = Math.ceil(data.length / this.props.rowsPerPage)
+    const columns = nextProps.columnHeader || Object.keys(data[0] || [])
+    const dataLength = data.length
+
+    if (
+      (dataLength !== this.props.data.length && nextState.dataLength != dataLength) ||
+      (nextState.dropdownValue && this.state.dropdownValue != nextState.dropdownValue)
+    ) {
       this.setState({
         numberOfPages,
         columns,
-        dataLength
+        dataLength,
+        data
       })
     }
   }
@@ -57,13 +107,57 @@ export default class DataTable extends React.Component {
     }
   }
 
+  onDropdownChange = (e, d) => {
+    this.setState({ dropdownValue: d.value })
+  }
+
+  renderFilterToolbox = () => {
+    const options = [{ key: 1123011, value: -1, text: 'ALL' }]
+    const dropdownOpt = _.uniqBy(this.props.data, d => d.teamID).map(v => ({ key: v.teamID, value: v.teamID, text: `TEAM ${v.teamID}` }))
+    options.push(...dropdownOpt)
+    return (
+      <div className={this.props.className}>
+        <Dropdown placeholder="ALL" options={options} search selection onChange={this.onDropdownChange} />
+      </div>
+    )
+  }
+
+  handleSort = idx => {
+    if (this.state.sortBy == idx) {
+      this.setState({ increasingSort: !this.state.increasingSort })
+    } else {
+      this.setState({ sortBy: idx })
+    }
+  }
+
+  transformContent = (content, key) => {
+    if (typeof content == 'number' && key !== 'sensID') {
+      return content.toPrecision(5)
+    }
+    return content
+  }
+
   render() {
-    const { data, title, className } = this.props
-    const { currentPage, rowsPerPage, numberOfPages, columns } = this.state
+    const { title, className, filterable } = this.props
+    const { currentPage, rowsPerPage, numberOfPages, columns, sortBy, increasingSort } = this.state
+
+    let { data } = this.state
+
+    if (sortBy != 'date') {
+      data = _.sortBy(data, [sortBy]).map(value => {
+        value.date = moment(value.date).format('LLL')
+        return value
+      })
+    } else {
+      data = _.sortBy(data, o => new moment(o.date).format('YYYYMMDDHHmmSS')).map(value => {
+        value.date = moment(value.date).format('LLL')
+        return value
+      })
+    }
+    if (!increasingSort) data = data.reverse()
 
     //slice current data set (more filters could be added, and also sorting)
     const currentData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-    console.log(currentData) // eslint-disable-line
 
     //define start page
     let startPage
@@ -76,20 +170,33 @@ export default class DataTable extends React.Component {
     }
 
     let pageRange = Array.from(new Array(Math.min(3, numberOfPages)), (x, i) => i + startPage)
-    console.log(startPage, pageRange) //eslint-disable-line
 
     return (
       <div className={className}>
         {title && <Header size="large"> {title} </Header>}
+        {filterable && this.renderFilterToolbox()}
+
         <Table {...this.props.tableProps}>
           {this.props.header && (
             <TableHeader>
-              <TableRow>{columns.map(key => <TableHeaderCell key={key}>{key}</TableHeaderCell>)}</TableRow>
+              <TableRow>
+                {columns.map(key => (
+                  <StyledTableHeaderCell key={key} onClick={() => this.handleSort(key)} Asc={increasingSort} doActive={key == sortBy}>
+                    <span className="left"> {key} </span>
+                    <span className="right">
+                      <Icon name="triangle up" className="asc" />
+                      <Icon name="triangle down" className="desc" />
+                    </span>
+                  </StyledTableHeaderCell>
+                ))}
+              </TableRow>
             </TableHeader>
           )}
           <TableBody>
             {currentData.map(row => (
-              <TableRow key={hash(row)}>{columns.map(key => <TableCell key={hash({ ...row, key })} content={row[key]} />)}</TableRow>
+              <TableRow key={hash(row)}>
+                {columns.map(key => <TableCell key={hash({ ...row, key })} content={this.transformContent(row[key], key)} />)}
+              </TableRow>
             ))}
           </TableBody>
           <TableFooter>
