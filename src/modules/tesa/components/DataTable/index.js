@@ -3,6 +3,7 @@ import * as hash from 'object-hash'
 import {
   Header,
   Icon,
+  Input,
   Menu,
   MenuItem,
   Table,
@@ -14,25 +15,67 @@ import {
   TableRow
 } from 'semantic-ui-react'
 
+import Datetime from 'react-datetime'
 import { Dropdown } from 'semantic-ui-react'
+import LineChart from 'modules/tesa/components/LineChart'
 import React from 'react'
 import _ from 'lodash'
+import { media } from 'common/mixins/'
 import moment from 'moment'
 import styled from 'styled-components'
+
+const StyledLineChart = styled(LineChart)`
+  width: 70%;
+  ${media.xs`
+    width: 100%;
+  `};
+`
+const LineChartContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`
 
 const StyledTableHeaderCell = styled(TableHeaderCell)`
   .left {
     display: block;
     float: left;
+    ${media.xs`
+      float: unset;
+    `};
   }
   .right {
     display: block;
     float: right;
+    ${media.xs`
+      display: none;
+    `};
     .asc {
       display: ${props => (props.Asc || !props.doActive ? 'block' : 'none')};
     }
     .desc {
       display: ${props => (!props.Asc || !props.doActive ? 'block' : 'none')};
+    }
+  }
+`
+
+const ToolboxContainer = styled.div`
+  display: block;
+  width: 100%;
+  > * {
+    display: block;
+    float: left;
+    margin: 10px 20px;
+  }
+
+  .datetime {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    > span {
+      padding: 0 20px;
+      font-weight: bold;
     }
   }
 `
@@ -56,13 +99,15 @@ export default class DataTable extends React.Component {
       data: data,
       dropdownValue: -1,
       sortBy: 'sensID',
-      increasingSort: true
+      increasingSort: true,
+      startDate: null,
+      endDate: null
     }
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     let data = nextProps.data
-    let dropdownValue = nextState.dropdownValue || this.state.dropdownValue
+    let dropdownValue = this.state.dropdownValue
     if (nextProps.filterable && dropdownValue != -1) {
       data = data.filter(v => v.teamID == dropdownValue)
     }
@@ -71,17 +116,12 @@ export default class DataTable extends React.Component {
     const columns = nextProps.columnHeader || Object.keys(data[0] || [])
     const dataLength = data.length
 
-    if (
-      (dataLength !== this.props.data.length && nextState.dataLength != dataLength) ||
-      (nextState.dropdownValue && this.state.dropdownValue != nextState.dropdownValue)
-    ) {
-      this.setState({
-        numberOfPages,
-        columns,
-        dataLength,
-        data
-      })
-    }
+    this.setState({
+      numberOfPages,
+      columns,
+      dataLength,
+      data
+    })
   }
 
   handlePageClick = e => {
@@ -107,19 +147,48 @@ export default class DataTable extends React.Component {
     }
   }
 
-  onDropdownChange = (e, d) => {
-    this.setState({ dropdownValue: d.value })
+  handleDateChange = (time, attr) => {
+    if (typeof time == 'string') {
+      return
+    }
+
+    let { startDate, endDate } = this.state
+    let data = this.props.data
+
+    if (attr == 'startDate') {
+      startDate = time
+    } else {
+      endDate = time
+    }
+
+    if (startDate && endDate) {
+      data = data.filter(d => {
+        const da = moment(d.date)
+        return da >= startDate && da <= endDate
+      })
+    }
+    let dropdownValue = this.state.dropdownValue
+    data = data.filter(v => v.teamID == dropdownValue)
+    const numberOfPages = Math.ceil(data.length / this.props.rowsPerPage)
+    const columns = this.props.columnHeader || Object.keys(data[0] || [])
+    const dataLength = data.length
+
+    this.setState({ [attr]: time, data, columns, dataLength, numberOfPages })
   }
 
-  renderFilterToolbox = () => {
-    const options = [{ key: 1123011, value: -1, text: 'ALL' }]
-    const dropdownOpt = _.uniqBy(this.props.data, d => d.teamID).map(v => ({ key: v.teamID, value: v.teamID, text: `TEAM ${v.teamID}` }))
-    options.push(...dropdownOpt)
-    return (
-      <div className={this.props.className}>
-        <Dropdown placeholder="ALL" options={options} search selection onChange={this.onDropdownChange} />
-      </div>
-    )
+  onDropdownChange = (e, d) => {
+    if (this.state.dropdownValue != d.value) {
+      let data = this.props.data
+      let dropdownValue = d.value
+      if (dropdownValue != -1) {
+        data = data.filter(v => v.teamID == dropdownValue)
+      }
+      const numberOfPages = Math.ceil(data.length / this.props.rowsPerPage)
+      const columns = this.props.columnHeader || Object.keys(data[0] || [])
+      const dataLength = data.length
+
+      this.setState({ dropdownValue, data, columns, dataLength, numberOfPages })
+    }
   }
 
   handleSort = idx => {
@@ -137,12 +206,64 @@ export default class DataTable extends React.Component {
     return content
   }
 
+  renderInput = props => {
+    return (
+      <Input icon placeholder={props.placeholder}>
+        <input {...props} />
+        <Icon name="calendar" />
+      </Input>
+    )
+  }
+
+  renderFilterToolbox = () => {
+    const options = [{ key: 1123011, value: -1, text: 'ALL' }]
+    const dropdownOpt = _.sortBy(
+      _.uniqBy(this.props.data, d => d.teamID).map(v => ({ key: v.teamID, value: v.teamID, text: `TEAM ${v.teamID}` })),
+      d => d.value
+    )
+    options.push(...dropdownOpt)
+    return (
+      <ToolboxContainer>
+        <Dropdown placeholder="ALL" options={options} search selection onChange={this.onDropdownChange} />
+        <div className="datetime">
+          <span> Start Date </span>
+          <Datetime
+            onChange={moment => this.handleDateChange(moment, 'startDate')}
+            value={this.state.startDate}
+            renderInput={this.renderInput}
+            placeholder={'Select Date'}
+            inputProps={{
+              id: 'startDate',
+              name: 'startDate',
+              text: 'Start Date',
+              required: true
+            }}
+          />
+        </div>
+        <div className="datetime">
+          <span> End Date </span>
+          <Datetime
+            onChange={moment => this.handleDateChange(moment, 'endDate')}
+            value={this.state.endDate}
+            renderInput={this.renderInput}
+            placeholder={'Select Date'}
+            inputProps={{
+              id: 'endDate',
+              name: 'endDate',
+              text: 'End Date',
+              required: true
+            }}
+          />
+        </div>
+      </ToolboxContainer>
+    )
+  }
+
   render() {
-    const { title, className, filterable } = this.props
-    const { currentPage, rowsPerPage, numberOfPages, columns, sortBy, increasingSort } = this.state
+    const { title, className, filterable, disableGraph } = this.props
+    const { currentPage, rowsPerPage, numberOfPages, columns, sortBy, increasingSort, dropdownValue } = this.state
 
     let { data } = this.state
-
     if (sortBy != 'date') {
       data = _.sortBy(data, [sortBy]).map(value => {
         value.date = moment(value.date).format('LLL')
@@ -158,6 +279,22 @@ export default class DataTable extends React.Component {
 
     //slice current data set (more filters could be added, and also sorting)
     const currentData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+    let val = [],
+      val_x = [],
+      val_y = [],
+      val_z = []
+    if (dropdownValue != -1) {
+      for (let i = 0; i < data.length; i++) {
+        let datum = data[i]
+        if (datum.val != null) {
+          val.push({ x: moment(datum.date), y: datum.val })
+        } else {
+          val_x.push({ x: moment(datum.date), y: datum.val_x })
+          val_y.push({ x: moment(datum.date), y: datum.val_y })
+          val_z.push({ x: moment(datum.date), y: datum.val_z })
+        }
+      }
+    }
 
     //define start page
     let startPage
@@ -175,6 +312,13 @@ export default class DataTable extends React.Component {
       <div className={className}>
         {title && <Header size="large"> {title} </Header>}
         {filterable && this.renderFilterToolbox()}
+
+        {dropdownValue != -1 &&
+          !disableGraph && (
+            <LineChartContainer>
+              <StyledLineChart val={val} val_x={val_x} val_z={val_z} val_y={val_y} />
+            </LineChartContainer>
+          )}
 
         <Table {...this.props.tableProps}>
           {this.props.header && (

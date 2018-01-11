@@ -1,13 +1,12 @@
 import DataTable from './index'
 import React from 'react'
 
-const DigitalInputDataTable = ({ className, data, filterable, showGraph }) => {
+const NotificationDataTable = ({ className, data, filterable }) => {
   return (
     <div className={className}>
       <DataTable
-        title="Digital Input"
+        title="Nofication"
         data={data.toJS()}
-        filterable={filterable}
         tableProps={{
           compact: true,
           basic: 'very',
@@ -15,12 +14,13 @@ const DigitalInputDataTable = ({ className, data, filterable, showGraph }) => {
           size: 'small'
         }}
         header
-        showGraph={showGraph}
+        disableGraph
+        filterable={filterable}
         rowsPerPage={20}
-        columnHeader={['teamID', 'sensID', 'val', 'date']}
+        columnHeader={['teamID', 'description', 'date']}
       />
     </div>
   )
 }
 
-export default DigitalInputDataTable
+export default NotificationDataTable

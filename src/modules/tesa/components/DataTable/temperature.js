@@ -1,7 +1,7 @@
 import DataTable from './index'
 import React from 'react'
 
-const TemperatureDataTable = ({ className, data, filterable }) => {
+const TemperatureDataTable = ({ className, data, filterable, showGraph }) => {
   return (
     <div className={className}>
       <DataTable
@@ -15,6 +15,7 @@ const TemperatureDataTable = ({ className, data, filterable }) => {
           size: 'small'
         }}
         header
+        showGraph={showGraph}
         rowsPerPage={20}
         columnHeader={['teamID', 'sensID', 'val', 'date']}
       />

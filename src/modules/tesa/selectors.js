@@ -7,7 +7,8 @@ const selectors = {
   humidity: state => state.getIn(['tesa', 'humidity', 'data']) || Immutable.List(),
   gyroscope: state => state.getIn(['tesa', 'gyroscope', 'data']) || Immutable.List(),
   accelerometer: state => state.getIn(['tesa', 'accelerometer', 'data']) || Immutable.List(),
-  digitalInput: state => state.getIn(['tesa', 'digitalInput', 'data']) || Immutable.List()
+  digitalInput: state => state.getIn(['tesa', 'digitalInput', 'data']) || Immutable.List(),
+  notification: state => state.getIn(['tesa', 'notification', 'data']) || Immutable.List()
 }
 
 export default selectors

@@ -1,7 +1,7 @@
 import DataTable from './index'
 import React from 'react'
 
-const AccelerometerDataTable = ({ className, data, filterable }) => {
+const AccelerometerDataTable = ({ className, data, filterable, showGraph }) => {
   return (
     <div className={className}>
       <DataTable
@@ -15,6 +15,7 @@ const AccelerometerDataTable = ({ className, data, filterable }) => {
           size: 'small'
         }}
         header
+        showGraph={showGraph}
         rowsPerPage={20}
         columnHeader={['teamID', 'sensID', 'val_x', 'val_y', 'val_z', 'date']}
       />

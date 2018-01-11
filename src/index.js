@@ -12,6 +12,7 @@ import HumidityPage from 'pages/humidity'
 import IndexPage from 'pages/index'
 import LedPage from 'pages/led'
 import MagnetometerPage from 'pages/magnetometer'
+import NotificationPage from 'pages/notification'
 import PressurePage from 'pages/pressure'
 import { Provider } from 'react-redux'
 import React from 'react'
@@ -48,6 +49,7 @@ ReactDOM.render(
         <Route path="/led" component={LedPage} />
         <Route path="/magnetometer" component={MagnetometerPage} />
         <Route path="/din" component={DigitalInputPage} />
+        <Route path="/notification" component={NotificationPage} />
       </div>
     </ConnectedRouter>
   </Provider>,

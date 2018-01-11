@@ -16,7 +16,7 @@ class AccelerometerPage extends React.Component {
 
     return (
       <Container>
-        <AccelerometerDataTable data={accelerometer} />
+        <AccelerometerDataTable data={accelerometer} filterable />
       </Container>
     )
   }

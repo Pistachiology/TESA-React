@@ -9,6 +9,7 @@ const humidityApiAction = createApiAction(constants.HUMIDITY)
 const gyroscopeApiAction = createApiAction(constants.GYROSCOPE)
 const accelerometerApiAction = createApiAction(constants.ACCELEROMETER)
 const digitalInputApiAction = createApiAction(constants.DIGITAL_INPUT)
+const notificationInputApiAction = createApiAction(constants.NOTIFICATION)
 
 const actions = {
   getTemperature: () => temperatureApiAction.fetch(Api.getTemperature),
@@ -17,7 +18,16 @@ const actions = {
   getHumidity: () => humidityApiAction.fetch(Api.getHumidity),
   getGyroscope: () => gyroscopeApiAction.fetch(Api.getGyroscope),
   getAccelerometer: () => accelerometerApiAction.fetch(Api.getAccelerometer),
-  getDigitalInput: i => digitalInputApiAction.fetch(Api.getDigitalInput, i)
+  getDigitalInput: i => digitalInputApiAction.fetch(Api.getDigitalInput, i),
+  getNotification: () => notificationInputApiAction.fetch(Api.getNotification),
+  getLatestTemperature: () => temperatureApiAction.fetch(Api.getLatestTemperature),
+  getLatestPressure: () => pressureApiAction.fetch(Api.getLatestPressure),
+  getLatestMagnetometer: () => magnetometerApiAction.fetch(Api.getLatestMagnetometer),
+  getLatestHumidity: () => humidityApiAction.fetch(Api.getLatestHumidity),
+  getLatestGyroscope: () => gyroscopeApiAction.fetch(Api.getLatestGyroscope),
+  getLatestAccelerometer: () => accelerometerApiAction.fetch(Api.getLatestAccelerometer),
+  getLatestDigitalInput: i => digitalInputApiAction.fetch(Api.getLatestDigitalInput, i),
+  getLatestNotification: () => notificationInputApiAction.fetch(Api.getLatestNotification)
 }
 
 export default actions

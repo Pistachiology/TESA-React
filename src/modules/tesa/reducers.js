@@ -9,7 +9,8 @@ const reducers = combineReducers({
   humidity: createApiReducer(constants.HUMIDITY),
   gyroscope: createApiReducer(constants.GYROSCOPE),
   accelerometer: createApiReducer(constants.ACCELEROMETER),
-  digitalInput: createApiReducer(constants.DIGITAL_INPUT)
+  digitalInput: createApiReducer(constants.DIGITAL_INPUT),
+  notification: createApiReducer(constants.NOTIFICATION)
 })
 
 export default reducers
