@@ -1,6 +1,6 @@
 import api from './manager'
 
-const Api = {
+export default {
   getTemperature() {
     return api.get('/temperature')
   },
@@ -43,5 +43,3 @@ const Api = {
     })
   }
 }
-
-export default Api

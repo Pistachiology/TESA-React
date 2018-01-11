@@ -131,7 +131,7 @@ export default class DataTable extends React.Component {
   }
 
   transformContent = (content, key) => {
-    if (typeof content == 'number' && key !== 'sensID') {
+    if (typeof content == 'number' && key !== 'sensID' && key !== 'teamID') {
       return content.toPrecision(5)
     }
     return content
